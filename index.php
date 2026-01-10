@@ -1126,7 +1126,7 @@ $current_assets = $current_release_data ? getAssetsList($current_release_data) :
             </div>
 
             <div class="search-container">
-                <span style="font-size: 1.5em; font-weight: bold;">资源列表 <span id="fileCountBadge" class="file-count-badge" <?php echo empty($current_assets) ? 'style="display: none;"' : ''; ?>><?php echo count($current_assets); ?> 个项目</span> <span style="font-size: 0.5em;">本站仅做数据记录，不对下载可用性做任何保证</span></span>
+                <span style="font-size: 1.5em; font-weight: bold;">资源列表 <span id="fileCountBadge" class="file-count-badge" <?php echo empty($current_assets) ? 'style="display: none;"' : ''; ?>><?php echo count($current_assets); ?> 个项目</span> <span style="font-size: 0.5em;">本站仅做数据记录，不对下载可用性与文件内容做任何保证</span></span>
                 <input type="text" id="searchInput" placeholder="搜索文件名..." class="search-input" <?php echo empty($current_assets) ? 'disabled' : ''; ?> />
             </div>
             <div class="file-list" id="fileList">
