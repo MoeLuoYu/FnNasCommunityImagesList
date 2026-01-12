@@ -2,6 +2,21 @@
 // 引入Parsedown解析库
 require_once '../include/Parsedown.php';
 
+if (isset($_GET['replaceList'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    $renderer = new MarkdownRenderer();
+    echo json_encode(
+        [
+            '格式' => '原始URL=>替换的URL',
+            'imgReplaceMap' => $renderer->imgReplaceMap
+        ],
+        JSON_UNESCAPED_SLASHES |
+        JSON_UNESCAPED_UNICODE |
+        JSON_PRETTY_PRINT
+    );
+    die;
+}
+
 class MarkdownRenderer
 {
     // 配置项
@@ -11,7 +26,7 @@ class MarkdownRenderer
     private $cacheMetaFile = __DIR__ . '/cache/meta.json';
     private $updateInterval = 3600;
     
-    private $imgReplaceMap = [
+    public $imgReplaceMap = [
         'https://github.com/user-attachments/assets/c48d1b9c-e1d9-43a6-b5a5-69c0bdb2ff3b' => 'https://youke3.picui.cn/s1/2026/01/10/69614cce641e6.jpg',
     ];
 
@@ -107,7 +122,7 @@ class MarkdownRenderer
                 'User-Agent: PHP-Markdown-Renderer/1.0',
                 $this->getIfNoneMatchHeader()
             ],
-            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_HEADER => true,
         ]);
 
@@ -202,6 +217,8 @@ class MarkdownRenderer
                 $updateTime = date('Y-m-d H:i:s', $meta['last_update_time']);
             }
         }
+     
+        $updateTimeWithRegion = date('Y-m-d H:i:s T');
 
         $processing_time = microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
         $current_time_gmt8 = date('Y-m-d H:i', time());
@@ -290,7 +307,12 @@ class MarkdownRenderer
     <div class="header">
         <div class="header-container">
             <div class="header-title">ophub/fnnas README</div>
-            <div class="update-info">上次拉取更新 {$updateTime} 拉取自 <a href="https://github.com/ophub/fnnas/blob/main/README.cn.md" target="_blank" class="gray-link">Github</a></div>
+            <div class="update-info">
+                <span style="font-size: 0.8em;text-align:right;">
+                    <p>上次拉取更新 {$updateTimeWithRegion} 拉取自 <a href="https://github.com/ophub/fnnas/blob/main/README.cn.md" target="_blank" class="gray-link">Github</a></p>
+                    <p>为保证页面的相对可用性，本页面已将部分url内容进行了<a href="?replaceList" target="_blank" class="gray-link">替换</a></p>
+                </span>
+            </div>
         </div>
     </div>
     <div class="container">
@@ -319,14 +341,13 @@ class MarkdownRenderer
 
         a.gray-link {
             color: #ccc;
-            text-decoration: none;
         }
         a.gray-link:hover {
             color: #999;
             text-decoration: underline;
         }
         a.gray-link:visited {
-            color: #888;
+            color: #ccc;
         }
 
         .gray-separator {
